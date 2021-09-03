@@ -9,8 +9,8 @@ dependencyResolutionManagement {
         }
     }
 }
-include ':app'
 include ':permission_ext-annotations'
 include ':permission_ext-compiler'
 include ':permission_ext'
 include ':permission_ext-plugin'
+include ':demo'

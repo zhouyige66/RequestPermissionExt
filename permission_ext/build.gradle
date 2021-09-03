@@ -35,6 +35,9 @@ dependencies {
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+
+    // 使用api，具体项目中使用，只需要添加permission_ext依赖即可
+    api project(path: ':permission_ext-annotations')
 }
 
 afterEvaluate {
