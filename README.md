@@ -1,7 +1,10 @@
 ## 简介
 * 一个基于APT、Transform API实现的注解处理权限申请的库。
+## 原理
+* 使用APT处理注解@RequestPermission，解析注解属性，使用javapoet生成判断权限、申请权限的代码
+* 自定义Gradle插件，找到包含@RequestPermission注解的方法，使用javassist修改对应原方法名，并新增一个与原方法同名的方法，并调用APT生成的类的方法
 ## 使用方法
-1. 项目根目录build.gradle
+1. 项目根目录build.gradle（tag为对应的git tag,如1.0.0）
    ```
    repositories {
         ...
@@ -11,10 +14,10 @@
    dependencies {
         ···
         // TODO 2.添加插件classpath
-        classpath "com.github.zhouyige66.RequestPermissionExt:permission_ext-plugin:1.0.0"
+        classpath "com.github.zhouyige66.RequestPermissionExt:permission_ext-plugin:tag"
    }
    ```
-2. app build.gradle配置
+2. app build.gradle配置（tag为对应的git tag,如1.0.0）
    ```
    plugins {
       ···
@@ -24,9 +27,9 @@
    dependencies {
       ···
       // TODO 4.添加注解处理器
-      annotationProcessor 'com.github.zhouyige66.RequestPermissionExt:permission_ext-compiler:1.0.0'
+      annotationProcessor 'com.github.zhouyige66.RequestPermissionExt:permission_ext-compiler:tag'
       // TODO 5.添加注解绑定器
-      implementation 'com.github.zhouyige66.RequestPermissionExt:permission_ext:1.0.0'
+      implementation 'com.github.zhouyige66.RequestPermissionExt:permission_ext:tag'
    }
    ```
 3. 代码中使用，请注意PermissionHelper.register与PermissionHelper.unRegister需要成对使用，不一定在activity中使用
@@ -48,7 +51,8 @@
    }
    ```
 4. 待完善功能
-   权限申请成功后，暂未实现自动调用业务方法，需要用户自己在onRequestPermissionsResult中根据结果自行调用（后续版本会考虑实现）。
+ * [ ] 权限申请成功后，暂未实现自动调用业务方法，需要用户自己在onRequestPermissionsResult中根据结果自行调用（后续版本会考虑实现）。
+ * [ ] kotlin支持（暂未测试是否可用）。
 ---
 ## 关于作者
 * Email： zhouyige66@163.com
