@@ -1,0 +1,43 @@
+plugins {
+    id 'groovy'
+//    id 'maven'
+//    id 'com.github.dcendents.android-maven'
+    id 'maven-publish'
+}
+group = 'cn.roy.zlib.permission_ext'
+version = '1.0.0'
+
+dependencies {
+    implementation gradleApi()
+    implementation localGroovy()
+    implementation 'com.android.tools.build:gradle:4.2.2'
+    // 动态修改class
+    implementation 'org.javassist:javassist:3.28.0-GA'
+}
+
+//uploadArchives {
+//    repositories {
+//        mavenDeployer {
+//            repository(url: uri('../repo'))
+//        }
+//    }
+//}
+
+// Because the components are created only during the afterEvaluate phase, you must
+// configure your publications using the afterEvaluate() lifecycle method.
+afterEvaluate {
+    publishing {
+        publications {
+            // Creates a Maven publication called "release".
+            release(MavenPublication) {
+                // Applies the component for the release build variant.
+                from components.java
+
+                // You can then customize attributes of the publication as shown below.
+                groupId = 'cn.roy'
+                artifactId = 'permission_ext-plugin'
+                version = '1.0'
+            }
+        }
+    }
+}

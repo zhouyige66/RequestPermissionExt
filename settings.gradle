@@ -1,0 +1,16 @@
+dependencyResolutionManagement {
+//    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+        jcenter() // Warning: this repository is going to shut down soon
+        maven {
+            url 'https://jitpack.io'
+        }
+    }
+}
+include ':app'
+include ':permission_ext-annotations'
+include ':permission_ext-compiler'
+include ':permission_ext'
+include ':permission_ext-plugin'
