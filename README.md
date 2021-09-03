@@ -2,46 +2,51 @@
 * 一个基于APT、Transform API实现的注解处理权限申请的库。
 ## 使用方法
 1. 项目根目录build.gradle
-    ```
-    repositories {
+   ```
+   repositories {
         ...
-         // TODO 1.添加jitpack仓库地址
-         maven { url 'https://jitpack.io' }
-    }
-    dependencies {
-         ···
-         // TODO 2.添加插件classpath
-         classpath "com.github.zhouyige66.RequestPermissionExt:permission_ext-plugin:1.0.0"
-    }
-    ```
+        // TODO 1.添加jitpack仓库地址
+        maven { url 'https://jitpack.io' }
+   }
+   dependencies {
+        ···
+        // TODO 2.添加插件classpath
+        classpath "com.github.zhouyige66.RequestPermissionExt:permission_ext-plugin:1.0.0"
+   }
+   ```
 2. app build.gradle配置
-    ```
-    plugins {
-       ···
-       // TODO 3.应用插件
-       id 'cn.roy.zlib.permission_ext.plugin'
-    }
-    dependencies {
-       ···
-       // TODO 4.添加注解处理器
-       annotationProcessor 'com.github.zhouyige66.RequestPermissionExt:permission_ext-compiler:1.0.0'
-       // TODO 5.添加注解绑定器
-       implementation 'com.github.zhouyige66.RequestPermissionExt:permission_ext:1.0.0'
-    }
-    ```
-3. 代码中使用
-    ```
-    @RequestPermission(permissions = {Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            Manifest.permission.RECORD_AUDIO},
-            autoApply = true,
-            applyPermissionCode = 10000,
-            applyPermissionTip = "应用需要存储权限、录音机权限，请授予存储权限",
-            lackPermissionTip = "缺乏相应权限，请进入应用管理页面授予相应权限"
-    )
-    public void openCamera(String path) {
-        // 业务代码
-    }
-    ```
+   ```
+   plugins {
+      ···
+      // TODO 3.应用插件
+      id 'cn.roy.zlib.permission_ext.plugin'
+   }
+   dependencies {
+      ···
+      // TODO 4.添加注解处理器
+      annotationProcessor 'com.github.zhouyige66.RequestPermissionExt:permission_ext-compiler:1.0.0'
+      // TODO 5.添加注解绑定器
+      implementation 'com.github.zhouyige66.RequestPermissionExt:permission_ext:1.0.0'
+   }
+   ```
+3. 代码中使用，请注意PermissionHelper.register与PermissionHelper.unRegister需要成对使用，不一定在activity中使用
+   ```
+   // TODO 6.绑定辅助器（如activity的onCreate()方法）
+   PermissionHelper.register(Object obj, Context context); 
+   // TODO 7.解除绑定（如activity的onDestory()方法）
+   PermissionHelper.unRegister(Object obj);
+   // TODO 8.使用注解
+   @RequestPermission(permissions = {Manifest.permission.WRITE_EXTERNAL_STORAGE,
+         Manifest.permission.RECORD_AUDIO},
+         autoApply = true,
+         applyPermissionCode = 10000,
+         applyPermissionTip = "应用需要存储权限、录音机权限，请授予存储权限",
+         lackPermissionTip = "缺乏相应权限，请进入应用管理页面授予相应权限"
+   )
+   public void openCamera(String path) {
+     // 业务代码
+   }
+   ```
 4. 待完善功能
    权限申请成功后，暂未实现自动调用业务方法，需要用户自己在onRequestPermissionsResult中根据结果自行调用（后续版本会考虑实现）。
 ---

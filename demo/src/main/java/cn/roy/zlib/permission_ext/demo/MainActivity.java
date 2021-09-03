@@ -63,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        // TODO 7.解除绑定
         PermissionHelper.unRegister(this);
     }
 
