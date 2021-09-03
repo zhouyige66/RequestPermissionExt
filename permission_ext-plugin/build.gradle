@@ -4,8 +4,6 @@ plugins {
 //    id 'com.github.dcendents.android-maven'
     id 'maven-publish'
 }
-group = 'cn.roy.zlib.permission_ext'
-version = '1.0.0'
 
 dependencies {
     implementation gradleApi()
@@ -36,7 +34,7 @@ afterEvaluate {
                 // You can then customize attributes of the publication as shown below.
                 groupId = 'cn.roy'
                 artifactId = 'permission_ext-plugin'
-                version = '1.0'
+                version = '1.0.0'
             }
         }
     }
