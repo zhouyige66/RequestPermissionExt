@@ -15,7 +15,7 @@ buildscript {
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
         // TODO 2.添加自定义插件classpath
-        classpath "com.github.zhouyige66.RequestPermissionExt:permission_ext-plugin:1.0.0"
+        classpath "com.github.zhouyige66.RequestPermissionExt:permission_ext-plugin:1.1.0"
     }
 }
 
