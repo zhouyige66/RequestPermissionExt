@@ -12,6 +12,7 @@ public class RequestPermissionParams {
     private String applyPermissionTip;
     private int applyPermissionCode;
     private String lackPermissionTip;
+    private String applyPermissionTipUIClassName;
 
     public String[] getPermissions() {
         return permissions;
@@ -51,5 +52,13 @@ public class RequestPermissionParams {
 
     public void setLackPermissionTip(String lackPermissionTip) {
         this.lackPermissionTip = lackPermissionTip;
+    }
+
+    public String getApplyPermissionTipUIClassName() {
+        return applyPermissionTipUIClassName;
+    }
+
+    public void setApplyPermissionTipUIClassName(String applyPermissionTipUIClassName) {
+        this.applyPermissionTipUIClassName = applyPermissionTipUIClassName;
     }
 }

@@ -37,7 +37,7 @@ import javax.lang.model.type.TypeMirror;
 import javax.tools.Diagnostic;
 
 /**
- * @Description:
+ * @Description: 注解处理器
  * @Author: Roy Z
  * @Date: 2021/08/04
  * @Version: v1.0
@@ -121,12 +121,14 @@ public class RequestPermissionProcessor extends AbstractProcessor {
                 String applyPermissionTip = annotation.applyPermissionTip();
                 int applyPermissionCode = annotation.applyPermissionCode();
                 String lackPermissionTip = annotation.lackPermissionTip();
+                String applyPermissionTipUIClassName = annotation.applyPermissionTipUIClassName();
                 RequestPermissionParams requestPermissionParams = new RequestPermissionParams();
                 requestPermissionParams.setPermissions(permissions);
                 requestPermissionParams.setAutoApply(autoApply);
                 requestPermissionParams.setApplyPermissionTip(applyPermissionTip);
                 requestPermissionParams.setApplyPermissionCode(applyPermissionCode);
                 requestPermissionParams.setLackPermissionTip(lackPermissionTip);
+                requestPermissionParams.setApplyPermissionTipUIClassName(applyPermissionTipUIClassName);
                 requestPermissionMethodParams.setAnnotationParams(requestPermissionParams);
             }
         }
@@ -141,14 +143,15 @@ public class RequestPermissionProcessor extends AbstractProcessor {
     }
 
     private void productClass() {
-        log("开始生成扩展类");
+        log("生成扩展类开始");
+        ClassName Object = ClassName.get("java.lang", "Object");
         ClassName Activity = ClassName.get("android.app", "Activity");
         ClassName Context = ClassName.get("android.content", "Context");
         ClassName TextUtils = ClassName.get("android.text", "TextUtils");
         ClassName Log = ClassName.get("android.util", "Log");
         ClassName Toast = ClassName.get("android.widget", "Toast");
 
-        ClassName AlertDialog = ClassName.get("androidx.appcompat.app", "AlertDialog");
+        ClassName ApplyPermissionTipUI = ClassName.get("cn.roy.zlib.permission_ext", "ApplyPermissionTipUI");
         ClassName ActivityCompat = ClassName.get("androidx.core.app", "ActivityCompat");
         ClassName InvocationTargetException = ClassName.get("java.lang.reflect", "InvocationTargetException");
         ClassName Method = ClassName.get("java.lang.reflect", "Method");
@@ -157,30 +160,44 @@ public class RequestPermissionProcessor extends AbstractProcessor {
 
         log("生成扩展类的个数：" + processMap.values().size());
         for (RequestPermissionClassParams classParams : processMap.values()) {
+            ClassName classNameType = ClassName.bestGuess(classParams.getClassName());
             // 构造方法
-            MethodSpec constructor = MethodSpec.methodBuilder("setContext")
+            MethodSpec constructor = MethodSpec.constructorBuilder()
+                    .addParameter(ParameterSpec.builder(classNameType, "obj").build())
+                    .addStatement("this.proxy = obj")
+                    .addModifiers(Modifier.PUBLIC)
+                    .build();
+            // 接口方法
+            MethodSpec interfaceMethod = MethodSpec.methodBuilder("setContext")
                     .returns(void.class)
                     .addParameter(ParameterSpec.builder(Context, "context").build())
                     .addStatement("this.context = context")
                     .addModifiers(Modifier.PUBLIC)
                     .build();
+            // 权限方法生成
             List<RequestPermissionMethodParams> methodParamsList = classParams.getMethodParamsList();
             List<MethodSpec> methodSpecList = new ArrayList<>(methodParamsList.size());
             for (RequestPermissionMethodParams methodParams : methodParamsList) {
                 String methodName = methodParams.getMethodName();
-                log("处理方法：" + methodName);
-                RequestPermissionParams annotationParams = methodParams.getAnnotationParams();
+                log("处理注解方法开始：" + methodName);
+
+                // 返回值类型
                 TypeMirror returnType = methodParams.getReturnType();
+                // 方法参数
                 List<RequestPermissionMethodParams.MethodParameter> parameterList = methodParams.getParameterList();
-                List<ParameterSpec> parameterSpecList = new ArrayList<>(parameterList.size());
                 List<String> parameterClassList = new ArrayList<>();
+                List<String> parameterNameList = new ArrayList<>();
+                List<ParameterSpec> parameterSpecList = new ArrayList<>(parameterList.size());
                 for (RequestPermissionMethodParams.MethodParameter methodParameter : parameterList) {
                     TypeName parameterType = ClassName.get(methodParameter.getType());
-                    ParameterSpec parameterSpec = ParameterSpec.builder(parameterType,
-                            methodParameter.getName()).build();
+                    ParameterSpec parameterSpec =
+                            ParameterSpec.builder(parameterType, methodParameter.getName()).build();
                     parameterSpecList.add(parameterSpec);
                     parameterClassList.add(parameterType.toString() + ".class");
+                    parameterNameList.add(methodParameter.getName());
                 }
+                // 权限参数
+                RequestPermissionParams annotationParams = methodParams.getAnnotationParams();
                 String permissions = Arrays.stream(annotationParams.getPermissions())
                         .map(e -> String.format("\"%s\"", e))
                         .collect(Collectors.joining(","));
@@ -188,45 +205,78 @@ public class RequestPermissionProcessor extends AbstractProcessor {
                 String returnStr = "";
                 String returnStr2 = "";
                 if (returnType.toString().equals("void")) {
-                    returnStr = "method.invoke(context, path);";
+                    StringBuilder sb = new StringBuilder();
+                    sb.append("method.invoke(proxy");
+                    parameterNameList.forEach(e -> sb.append(",").append(e));
+                    sb.append(");");
+                    returnStr = sb.toString();
                     returnStr2 = "return;";
                 } else {
-                    returnStr = "return (" + returnType.toString() + ")method.invoke(context, path);";
+                    StringBuilder sb = new StringBuilder();
+                    sb.append("return (").append(returnType.toString()).append(")")
+                            .append("method.invoke(proxy");
+                    parameterNameList.forEach(e -> sb.append(",").append(e));
+                    sb.append(");");
+                    returnStr = sb.toString();
                     returnStr2 = "return null;";
                 }
                 CodeBlock block = CodeBlock.builder().add("if (hasPermission) {\n" +
                         "    try {\n" +
                         "        Log.d(\"RequestPermissionExt\",\"执行真实方法\");\n" +
-                        "        $T method = context.getClass()\n" +
-                        "                .getDeclaredMethod(methodName + \"_real\", methodParams);\n" +
-                        "        $L\n" +
-                        "    } catch (IllegalAccessException e) {\n" +
-                        "        e.printStackTrace();\n" +
-                        "    } catch ($T e) {\n" +
-                        "        e.printStackTrace();\n" +
-                        "    } catch (NoSuchMethodException e) {\n" +
-                        "        e.printStackTrace();\n" +
-                        "    }\n" +
-                        "    $L\n" +
-                        "}", Method, returnStr, InvocationTargetException, returnStr2).build();
+                        "        $T method = proxy.getClass()\n" +
+                        "                .getDeclaredMethod(methodName + \"_real\", methodParams);\n", Method)
+                        .add(returnStr)
+                        .add(
+                                "    } catch (IllegalAccessException e) {\n" +
+                                        "        e.printStackTrace();\n" +
+                                        "    } catch ($T e) {\n" +
+                                        "        e.printStackTrace();\n" +
+                                        "    } catch (NoSuchMethodException e) {\n" +
+                                        "        e.printStackTrace();\n" +
+                                        "    }\n" +
+                                        "    $L\n" +
+                                        "}", InvocationTargetException, returnStr2)
+                        .build();
 
-                CodeBlock block2 = CodeBlock.builder().add("if (context instanceof $T && autoApply) {\n" +
-                                "    Activity activity = (Activity) context;\n" +
-                                "    if (!$T.isEmpty(applyPermissionTip)) {\n" +
-                                "        new $T.Builder(context)\n" +
-                                "                .setMessage(applyPermissionTip)\n" +
-                                "                .setPositiveButton(\"确定\", (dialog, which) -> {\n" +
-                                "                    dialog.dismiss();\n" +
-                                "                    $T.requestPermissions(activity, permissions,\n" +
-                                "                            applyPermissionCode);\n" +
-                                "                }).setNegativeButton(\"取消\", (dialog, which) -> dialog.dismiss())\n" +
-                                "                .show();\n" +
-                                "    } else {\n" +
-                                "        ActivityCompat.requestPermissions(activity, permissions, applyPermissionCode);\n" +
-                                "    }\n" +
-                                "} else {\n" +
-                                "    $T.makeText(context, lackPermissionTip, Toast.LENGTH_SHORT).show()",
-                        Activity, TextUtils, AlertDialog, ActivityCompat, Toast).build();
+                CodeBlock block2 = CodeBlock.builder().add("if (this.context instanceof $T && autoApply) {\n" +
+                        "    Activity activity = (Activity) this.context;\n" +
+                        "    if (!$T.isEmpty(applyPermissionTip)) {\n" +
+                        "        if (TextUtils.isEmpty(applyPermissionTipUIClassName)) {\n" +
+                        "            applyPermissionTipUIClassName = \"cn.roy.zlib.permission_ext.DefaultApplyPermissionTipUI\";\n" +
+                        "        }\n" +
+                        "        boolean exception = false;\n" +
+                        "        try {\n" +
+                        "            Class<?> aClass = Class.forName(applyPermissionTipUIClassName);\n" +
+                        "            if (aClass.getSuperclass() ==\n" +
+                        "                    Class.forName(\"cn.roy.zlib.permission_ext.ApplyPermissionTipUI\")) {\n" +
+                        "                $T instance = (ApplyPermissionTipUI) aClass.newInstance();\n" +
+                        "                instance.setContext(activity);\n" +
+                        "                instance.setPermissions(permissions);\n" +
+                        "                instance.setApplyPermissionCode(applyPermissionCode);\n" +
+                        "                instance.setTipMessage(applyPermissionTip);\n" +
+                        "                instance.display();\n" +
+                        "            }\n" +
+                        "        } catch (ClassNotFoundException e) {\n" +
+                        "            exception = true;\n" +
+                        "            e.printStackTrace();\n" +
+                        "        } catch (IllegalAccessException e) {\n" +
+                        "            exception = true;\n" +
+                        "            e.printStackTrace();\n" +
+                        "        } catch (InstantiationException e) {\n" +
+                        "            exception = true;\n" +
+                        "            e.printStackTrace();\n" +
+                        "        } finally {\n" +
+                        "            if (exception) {\n" +
+                        "                $T.makeText(this.context, lackPermissionTip, Toast.LENGTH_SHORT).show();\n" +
+                        "            }\n" +
+                        "        }\n" +
+                        "    } else {\n" +
+                        "        $T.requestPermissions(activity, permissions, applyPermissionCode);\n" +
+                        "    }\n" +
+                        "} else {\n" +
+                        "    Toast.makeText(this.context, lackPermissionTip, Toast.LENGTH_SHORT).show();\n" +
+                        "}", Activity, TextUtils, ApplyPermissionTipUI, Toast, ActivityCompat)
+                        .build();
                 MethodSpec method = MethodSpec.methodBuilder(methodName)
                         .returns(ClassName.get(returnType))
                         .addModifiers(Modifier.PUBLIC)
@@ -237,34 +287,35 @@ public class RequestPermissionProcessor extends AbstractProcessor {
                         .addStatement("int applyPermissionCode = $L", annotationParams.getApplyPermissionCode())
                         .addStatement("String applyPermissionTip = $S", annotationParams.getApplyPermissionTip())
                         .addStatement("String lackPermissionTip = $S", annotationParams.getLackPermissionTip())
+                        .addStatement("String applyPermissionTipUIClassName = $S", annotationParams.getApplyPermissionTipUIClassName())
                         .addStatement("String methodName = $S", methodName)
                         .addStatement("Class<?>[] methodParams = {$L}", parameterClassList.stream().collect(Collectors.joining(",")))
                         .addStatement("boolean hasPermission = $T.hasPermission(context, permissions)", PermissionHelper)
                         .addStatement(block)
-                        .addStatement(block2)
-                        .addCode("}\n")
+                        .addCode(block2)
                         .addCode("$L\n", returnStr2)
                         .build();
                 methodSpecList.add(method);
             }
             // 属性
-            FieldSpec fieldSpec = FieldSpec.builder(Context, "context", Modifier.PRIVATE).build();
+            FieldSpec fieldSpec = FieldSpec.builder(classNameType, "proxy", Modifier.PRIVATE).build();
+            FieldSpec fieldSpec2 = FieldSpec.builder(Context, "context", Modifier.PRIVATE).build();
             // 类信息
             String className = classParams.getClassName();
             int index = className.lastIndexOf(".");
             String packageName = className.substring(0, index);
             String newClassName = className.substring(index + 1) + "_RequestPermissionExt";
-            log("创建新类，包名：" + packageName);
-            log("创建新类，类名：" + newClassName);
+            log("生成新类，包名：" + packageName + "，类名：" + newClassName);
             TypeSpec typeSpec = TypeSpec.classBuilder(newClassName)
                     .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
                     .addSuperinterface(RequestPermissionContextHolder)
                     .addField(fieldSpec)
+                    .addField(fieldSpec2)
                     .addMethod(constructor)
+                    .addMethod(interfaceMethod)
                     .addMethods(methodSpecList)
                     .build();
-            JavaFile javaFile = JavaFile.builder(packageName, typeSpec)
-                    .build();
+            JavaFile javaFile = JavaFile.builder(packageName, typeSpec).build();
             try {
                 javaFile.writeTo(processingEnv.getFiler());
             } catch (IOException e) {

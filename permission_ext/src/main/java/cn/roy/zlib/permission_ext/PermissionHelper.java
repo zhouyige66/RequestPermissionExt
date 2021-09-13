@@ -10,7 +10,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * @Description:
+ * @Description: 权限辅助器
  * @Author: Roy Z
  * @Date: 2021/08/04
  * @Version: v1.0
@@ -25,8 +25,8 @@ public class PermissionHelper {
             Class<?> clazz = obj.getClass().getClassLoader()
                     .loadClass(clsName + "_RequestPermissionExt");
             Constructor<? extends RequestPermissionContextHolder> constructor =
-                    (Constructor<? extends RequestPermissionContextHolder>) clazz.getConstructor();
-            target = constructor.newInstance();
+                    (Constructor<? extends RequestPermissionContextHolder>) clazz.getConstructor(obj.getClass());
+            target = constructor.newInstance(obj);
             target.setContext(context);
             registerMap.put(obj, target);
         } catch (IllegalAccessException e) {
@@ -42,12 +42,12 @@ public class PermissionHelper {
         }
     }
 
-    public static Object get(Object obj) {
-        return registerMap.get(obj);
-    }
-
     public static void unRegister(Object obj) {
         registerMap.remove(obj);
+    }
+
+    public static Object get(Object obj) {
+        return registerMap.get(obj);
     }
 
     public static boolean hasPermission(Context context, String[] permissions) {

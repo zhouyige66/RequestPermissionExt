@@ -52,4 +52,11 @@ public @interface RequestPermission {
      */
     String lackPermissionTip() default "";
 
+    /**
+     * 申请权限提示显示的UI
+     *
+     * @return 权限申请UI实现类的名称
+     */
+    String applyPermissionTipUIClassName() default "cn.roy.zlib.permission_ext.DefaultApplyPermissionTipUI";
+
 }
