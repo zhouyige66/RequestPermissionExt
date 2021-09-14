@@ -27,6 +27,17 @@
         app:layout_constraintTop_toBottomOf="@+id/section_label">
 
         <Button
+            android:id="@+id/btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="跳转权限管理页面" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="申请权限提示样式测试" />
+
+        <Button
             android:id="@+id/btn1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -37,13 +48,37 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/black"
-            android:text="相机授权（请求授权UI自定义样式）" />
+            android:text="存储授权（请求授权UI自定义样式）" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="申请权限返回值测试" />
 
         <Button
             android:id="@+id/btn3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/cardview_dark_background"
-            android:text="（定位、录音）权限授权" />
+            android:backgroundTint="@android:color/holo_blue_bright"
+            android:text="存储权限（返回String）" />
+
+        <Button
+            android:id="@+id/btn4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@android:color/holo_red_dark"
+            android:text="存储权限（返回对象）" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="多权限授权测试" />
+
+        <Button
+            android:id="@+id/btn5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@android:color/holo_green_light"
+            android:text="相机、录音权限" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

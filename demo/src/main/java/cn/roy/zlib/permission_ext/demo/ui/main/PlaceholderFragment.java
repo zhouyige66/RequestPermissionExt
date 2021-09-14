@@ -19,6 +19,8 @@ import java.io.File;
 
 import cn.roy.zlib.permission_ext.PermissionHelper;
 import cn.roy.zlib.permission_ext.RequestPermission;
+import cn.roy.zlib.permission_ext.demo.bean.User;
+import cn.roy.zlib.permission_ext.demo.util.SettingUIJumpUtils;
 import cn.roy.zlib.permission_ext.demo.databinding.FragmentMainBinding;
 
 /**
@@ -65,16 +67,31 @@ public class PlaceholderFragment extends Fragment {
                 textView.setText(s);
             }
         });
+        binding.btn.setOnClickListener(view -> {
+            new SettingUIJumpUtils(getActivity(), getActivity().getPackageName())
+                    .jumpPermissionPage();
+        });
         binding.btn1.setOnClickListener(view -> {
+            openExternalStoragePermission();
+
+        });
+        binding.btn2.setOnClickListener(view -> {
+            openExternalStoragePermission2();
+        });
+        binding.btn3.setOnClickListener(view -> {
             String dirPath = getDirPath("pic");
             if (dirPath != null) {
                 Toast.makeText(getActivity(), "路径为：" + dirPath, Toast.LENGTH_SHORT).show();
             }
         });
-        binding.btn2.setOnClickListener(view -> {
-            openCamera();
+        binding.btn4.setOnClickListener(view -> {
+            User u = getUser("你好");
+            if (u == null) {
+                return;
+            }
+            Toast.makeText(getActivity(), u.getName(), Toast.LENGTH_SHORT).show();
         });
-        binding.btn3.setOnClickListener(view -> {
+        binding.btn5.setOnClickListener(view -> {
             applyMultiPermission();
         });
         return root;
@@ -95,7 +112,28 @@ public class PlaceholderFragment extends Fragment {
 
     @RequestPermission(permissions = {Manifest.permission.WRITE_EXTERNAL_STORAGE},
             autoApply = true,
-            applyPermissionCode = 10000,
+            applyPermissionCode = 10001,
+            applyPermissionTip = "应用需要存储权限用于缓存数据，提高应用使用体验，请授予存储权限",
+            lackPermissionTip = "缺乏相应权限，请进入应用管理页面授予相应权限"
+    )
+    public void openExternalStoragePermission() {
+        Toast.makeText(getActivity(), "存储权限已获取，可执行操作", Toast.LENGTH_SHORT).show();
+    }
+
+    @RequestPermission(permissions = {Manifest.permission.WRITE_EXTERNAL_STORAGE},
+            autoApply = true,
+            applyPermissionCode = 10002,
+            applyPermissionTip = "应用需要存储权限用于缓存数据，提高应用使用体验，请授予存储权限",
+            lackPermissionTip = "缺乏相应权限，请进入应用管理页面授予相应权限",
+            applyPermissionTipUIClassName = "cn.roy.zlib.permission_ext.demo.component.PermissionTipDialog"
+    )
+    public void openExternalStoragePermission2() {
+        Toast.makeText(getActivity(), "存储权限已获取，可执行操作", Toast.LENGTH_SHORT).show();
+    }
+
+    @RequestPermission(permissions = {Manifest.permission.WRITE_EXTERNAL_STORAGE},
+            autoApply = true,
+            applyPermissionCode = 10003,
             applyPermissionTip = "应用需要存储权限用于保存用户数据，请授予存储权限",
             lackPermissionTip = "缺乏相应权限，请进入应用管理页面授予相应权限"
     )
@@ -103,25 +141,29 @@ public class PlaceholderFragment extends Fragment {
         return Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator + path;
     }
 
-    @RequestPermission(permissions = {Manifest.permission.CAMERA},
+    @RequestPermission(permissions = {Manifest.permission.WRITE_EXTERNAL_STORAGE},
             autoApply = true,
-            applyPermissionCode = 10000,
-            applyPermissionTip = "应用需要相机权限用于人脸认证，请授予存储权限",
-            lackPermissionTip = "缺乏相应权限，请进入应用管理页面授予相应权限",
-            applyPermissionTipUIClassName = "cn.roy.zlib.permission_ext.demo.PermissionTipDialog"
+            applyPermissionCode = 10004,
+            applyPermissionTip = "应用需要存储权限用于保存用户数据，请授予存储权限",
+            lackPermissionTip = "缺乏相应权限，请进入应用管理页面授予相应权限"
     )
-    public void openCamera() {
-        Toast.makeText(getActivity(), "相机权限已获取，可执行操作", Toast.LENGTH_SHORT).show();
+    public User getUser(String path) {
+        User user = new User();
+        user.setAge(29);
+        user.setName(path + "，Roy");
+        user.setId("001");
+        return user;
     }
 
-    @RequestPermission(permissions = {Manifest.permission.LOCATION_HARDWARE,
+    @RequestPermission(permissions = {Manifest.permission.CAMERA,
             Manifest.permission.RECORD_AUDIO},
             autoApply = true,
-            applyPermissionCode = 10000,
-            applyPermissionTip = "应用需要定位权限、录音机权限用于用户打卡信息，请授予存储权限",
+            applyPermissionCode = 10005,
+            applyPermissionTip = "应用需要相机、录音机权限用于用户打卡信息，请授予存储权限",
             lackPermissionTip = "缺乏相应权限，请进入应用管理页面授予相应权限"
     )
     public void applyMultiPermission() {
         Toast.makeText(getActivity(), "获取多权限成功", Toast.LENGTH_SHORT).show();
     }
+
 }

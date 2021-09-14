@@ -42,7 +42,7 @@ public final class Template implements RequestPermissionContextHolder {
         String applyPermissionTip = "应用需要存储权限、录音机权限，请授予存储权限";
         String lackPermissionTip = "缺乏相应权限，请进入应用管理页面授予相应权限";
         String methodName = "openCamera";
-        String applyPermissionTipUIClassName = "cn.roy.zlib.permission_ext.demo.PermissionTipDialog";
+        String applyPermissionTipUIClassName = "cn.roy.zlib.permission_ext.demo.component.PermissionTipDialog";
         Class<?>[] methodParams = new Class[]{String.class};
         boolean hasPermission = PermissionHelper.hasPermission(this.context, permissions);
         if (hasPermission) {

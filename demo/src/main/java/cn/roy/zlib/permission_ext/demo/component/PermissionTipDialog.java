@@ -1,10 +1,11 @@
-package cn.roy.zlib.permission_ext.demo;
+package cn.roy.zlib.permission_ext.demo.component;
 
 import android.widget.TextView;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import cn.roy.zlib.permission_ext.ApplyPermissionTipUI;
+import cn.roy.zlib.permission_ext.demo.R;
 
 /**
  * @Description:
