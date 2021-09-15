@@ -36,21 +36,20 @@ android {
 }
 
 dependencies {
-
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'com.google.android.material:material:1.3.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.3.1'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1'
-    implementation project(path: ':permission_ext')
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 
     // TODO 4.添加注解处理器
-//    annotationProcessor 'com.github.zhouyige66.RequestPermissionExt:permission_ext-compiler:1.1.0'
-    annotationProcessor project(path: ':permission_ext-compiler')
+    annotationProcessor 'com.github.zhouyige66.RequestPermissionExt:permission_ext-compiler:1.2.0'
     // TODO 5.添加注解绑定器
-//    implementation 'com.github.zhouyige66.RequestPermissionExt:permission_ext:1.1.0'
-
+    implementation 'com.github.zhouyige66.RequestPermissionExt:permission_ext:1.2.0'
+    // TODO 本地调试时，可使用一下配置
+//    annotationProcessor project(path: ':permission_ext-compiler')
+//    implementation project(path: ':permission_ext')
 }

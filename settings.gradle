@@ -11,6 +11,6 @@ dependencyResolutionManagement {
 }
 include ':permission_ext-annotations'
 include ':permission_ext-compiler'
-include ':permission_ext'
 include ':permission_ext-plugin'
+include ':permission_ext'
 include ':demo'

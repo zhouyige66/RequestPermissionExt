@@ -151,6 +151,10 @@ class RequestPermissionPluginTransform extends Transform {
             try {
                 def insertClassName = packageName + "." + classSimpleName + "_RequestPermissionExt"
                 println("需要插入类：" + insertClassName)
+                /**
+                 * 参数详见文档
+                 * http://www.javassist.org/tutorial/tutorial2.html#alter
+                 */
                 def returnStr
                 if (returnType == CtClass.voidType) {
                     returnType = String.format("proxy.%s(\$\$);", methodName)
