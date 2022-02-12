@@ -9,8 +9,11 @@ java {
 }
 
 dependencies {
+    // AutoService依赖
     implementation 'com.google.auto.service:auto-service:1.0-rc4'
+    // AutoService注解处理
     annotationProcessor 'com.google.auto.service:auto-service:1.0-rc4'
+    // Java代码生成框架
     implementation 'com.squareup:javapoet:1.10.0'
 
     implementation project(path: ':permission_ext-annotations')
