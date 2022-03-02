@@ -2,21 +2,15 @@ dependencyResolutionManagement {
 //    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
 //        google()
-        maven {
-            url 'https://maven.aliyun.com/repository/google'
-        }
 //        mavenCentral()
-        maven{
-            url 'https://maven.aliyun.com/repository/public'
-        }
-        jcenter() // Warning: this repository is going to shut down soon
-        maven {
-            url 'https://jitpack.io'
-        }
+//        jcenter()
+        maven { url 'https://maven.aliyun.com/repository/google' }
+        maven { url 'https://maven.aliyun.com/repository/public' }
+        maven { url 'https://jitpack.io' }
     }
 }
 include ':permission_ext-annotations'
 include ':permission_ext-compiler'
 include ':permission_ext-plugin'
-include ':permission_ext'
+include ':permission_ext_android'
 include ':demo'

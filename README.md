@@ -1,5 +1,10 @@
 ## 简介
 * 一个基于APT、Transform API实现的注解处理权限申请的库。
+* 该库主要目的是提供一个示例Demo，主要涉及的技术和框架如下：
+1. APT，注解处理工具
+2. JavaPoet，Java代码生成框架
+3. 自定义gradle插件
+4. Javassist，字节码处理工具
 ## 原理
 * 使用APT处理注解@RequestPermission，解析注解属性，使用javapoet生成判断权限、申请权限的代码
 * 自定义Gradle插件，找到包含@RequestPermission注解的方法，使用javassist修改对应原方法名，并插入一个与原方法同名的方法，并调用javapoet生成的类的方法

@@ -51,5 +51,5 @@ dependencies {
 //    implementation 'com.github.zhouyige66.RequestPermissionExt:permission_ext:1.2.0'
     // TODO 本地调试时，可使用一下配置
     annotationProcessor project(path: ':permission_ext-compiler')
-    implementation project(path: ':permission_ext')
+    implementation project(path: ':permission_ext_android')
 }
