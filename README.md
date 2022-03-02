@@ -2,7 +2,7 @@
 * 一个基于APT、Transform API实现的注解处理权限申请的库。
 ## 原理
 * 使用APT处理注解@RequestPermission，解析注解属性，使用javapoet生成判断权限、申请权限的代码
-* 自定义Gradle插件，找到包含@RequestPermission注解的方法，使用javassist修改对应原方法名，并新增一个与原方法同名的方法，并调用APT生成的类的方法
+* 自定义Gradle插件，找到包含@RequestPermission注解的方法，使用javassist修改对应原方法名，并插入一个与原方法同名的方法，并调用javapoet生成的类的方法
 ## 使用方法
 1. 项目根目录build.gradle（tag为对应的git tag,如1.0.0）
    ```
@@ -52,7 +52,9 @@
    ```
 4. 待完善功能
  * [ ] 权限申请成功后，暂未实现自动调用业务方法，需要用户自己在onRequestPermissionsResult中根据结果自行调用（后续版本会考虑实现）。
- * [ ] kotlin支持（暂未测试是否可用）。
+ * [ ] 计划使用ContentProvider的方式实现初始化。
+ * [ ] 计划使用独立的授权Activity的方式实现对授权结果的处理。
+ * [ ] 计划实现对kotlin的支持。
 ---
 ## 关于作者
 * Email： zhouyige66@163.com

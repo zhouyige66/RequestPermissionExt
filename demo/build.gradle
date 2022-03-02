@@ -46,10 +46,10 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 
     // TODO 4.添加注解处理器
-    annotationProcessor 'com.github.zhouyige66.RequestPermissionExt:permission_ext-compiler:1.2.0'
-    // TODO 5.添加注解绑定器
-    implementation 'com.github.zhouyige66.RequestPermissionExt:permission_ext:1.2.0'
+//    annotationProcessor 'com.github.zhouyige66.RequestPermissionExt:permission_ext-compiler:1.2.0'
+//    // TODO 5.添加注解绑定器
+//    implementation 'com.github.zhouyige66.RequestPermissionExt:permission_ext:1.2.0'
     // TODO 本地调试时，可使用一下配置
-//    annotationProcessor project(path: ':permission_ext-compiler')
-//    implementation project(path: ':permission_ext')
+    annotationProcessor project(path: ':permission_ext-compiler')
+    implementation project(path: ':permission_ext')
 }
